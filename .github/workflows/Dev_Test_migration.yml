@@ -38,13 +38,13 @@ on:
       tenantId:
         type: string
         required: true
-        default: 'YOUR_TENANT_ID'
+        default: '2000253'
         description: 'Target Tenant Id'
 
       entityId:
         type: string
         required: true
-        default: '2c92c8fe-6a24-d8b0-016a-288ca1bc055d'
+        default: '8adc8f9963001486016318a3299f534a'
         description: 'Target Tenant Entity Id'
 
       filePath:
