@@ -11,7 +11,7 @@
   "createdBy" : "Vemula Manoj",
   "updatedBy" : "Vemula Manoj",
   "createdOn" : "2026-06-24T14:28:20.272Z",
-  "updatedOn" : "2026-06-26T11:30:52.124Z",
+  "updatedOn" : "2026-06-26T11:37:03.515Z",
   "type" : "Others",
   "repo" : true,
   "connectorId" : null,
@@ -22,11 +22,11 @@
     "orgName" : "manojvemula2",
     "repoName" : "Dev-SBX1",
     "branchName" : "Deployments-SBX1",
-    "path" : "Dev-test_2",
-    "commitMessage" : "Second change",
+    "path" : "Dev-Sub_query",
+    "commitMessage" : "Added subscription query",
     "error" : null,
     "status" : "UPLOADED",
-    "commitId" : "8e9999e97bd00d394a5e685d638d24db10dec946"
+    "commitId" : "95e883b20a02802d9e26816ee5ff6452c1359758"
   },
   "content" : {
     "settings" : [ ],
@@ -47,7 +47,7 @@
       "segregationKeys" : [ "Available Queries" ],
       "originalPayload" : null,
       "response" : [ {
-        "id" : "2cad95ef-60bb-4045-b314-073a41a42317",
+        "id" : "db3d3ef0-0f2a-4731-a020-d8633dbc45ac",
         "key" : "Data Query",
         "segregationKey" : "Available Queries",
         "componentType" : "DataQuery",
@@ -140,6 +140,20 @@
             "QueryDescription" : "intrum",
             "SourceData" : "LIVE",
             "QueryName" : "legal entity"
+          }, {
+            "Id" : "b504d127-67da-42a4-8200-6ebbb046e915",
+            "type" : "SavedQuery",
+            "CreatedById" : "8b1145cf4bac4bd0a2bcad89678e4fc4",
+            "UpdatedById" : "8b1145cf4bac4bd0a2bcad89678e4fc4",
+            "CreatedDate" : "2026-06-26T11:36:35.781Z",
+            "UpdatedDate" : "2026-06-26T11:36:35.781Z",
+            "Compression" : "NONE",
+            "ReadDeleted" : false,
+            "Query" : "select * from product",
+            "OutputFormat" : "CSV",
+            "UseIndexJoin" : false,
+            "SourceData" : "LIVE",
+            "QueryName" : "Dev- product query"
           }, {
             "Id" : "c3e12d65-3372-46a4-9b9a-f96fb4862dab",
             "type" : "SavedQuery",
