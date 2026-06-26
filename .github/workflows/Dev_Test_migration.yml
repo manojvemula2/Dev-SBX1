@@ -50,7 +50,7 @@ on:
       filePath:
         type: string
         required: true
-        default: 'Dev-test_2/YourTemplate.json'
+        default: 'Dev-test_2/data_query.json'
         description: 'Template File Path'
 
       workflowVersionAsInActive:
