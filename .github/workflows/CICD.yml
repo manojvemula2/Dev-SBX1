@@ -1,0 +1,151 @@
+name: Zuora-CICD-Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  SOURCE_URL: https://rest.sandbox.eu.zuora.com
+  UAT_URL: https://rest.sandbox.eu.zuora.com
+  TARGET_URL: https://rest.sandbox.eu.zuora.com
+
+jobs:
+
+  # STEP 1: Download latest templates from Source Sandbox
+  template-sync:
+    runs-on: ubuntu-latest
+
+    outputs:
+      source_token: ${{ steps.source-auth.outputs.token }}
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: sudo apt update && sudo apt install -y curl jq
+
+      - name: Authenticate Source Sandbox
+        id: source-auth
+        run: |
+          response=$(curl --location "${{ env.SOURCE_URL }}/oauth/token" \
+            --header 'Content-Type: application/x-www-form-urlencoded' \
+            --data-urlencode "client_id=${{ secrets.SOURCE_CLIENT_ID }}" \
+            --data-urlencode "client_secret=${{ secrets.SOURCE_SECRET }}" \
+            --data-urlencode "grant_type=client_credentials")
+
+          token=$(echo "$response" | jq -r '.access_token')
+          echo "token=$token" >> $GITHUB_OUTPUT
+
+      - name: Download Template from Source Sandbox
+        run: |
+          curl --location "${{ env.SOURCE_URL }}/deployment-manager/templates/export" \
+            --header "Authorization: Bearer ${{ steps.source-auth.outputs.token }}" \
+            --output template.json
+
+      - name: Upload Template Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zuora-template
+          path: template.json
+
+
+  # STEP 2: Compare against UAT / Central Sandbox
+  compare-uat:
+    needs: template-sync
+    runs-on: ubuntu-latest
+
+    outputs:
+      uat_token: ${{ steps.uat-auth.outputs.token }}
+
+    steps:
+      - name: Download Template Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: zuora-template
+
+      - name: Install Dependencies
+        run: sudo apt update && sudo apt install -y curl jq
+
+      - name: Authenticate UAT Sandbox
+        id: uat-auth
+        run: |
+          response=$(curl --location "${{ env.UAT_URL }}/oauth/token" \
+            --header 'Content-Type: application/x-www-form-urlencoded' \
+            --data-urlencode "client_id=${{ secrets.UAT_CLIENT_ID }}" \
+            --data-urlencode "client_secret=${{ secrets.UAT_SECRET }}" \
+            --data-urlencode "grant_type=client_credentials")
+
+          token=$(echo "$response" | jq -r '.access_token')
+          echo "token=$token" >> $GITHUB_OUTPUT
+
+      - name: Compare Template with UAT
+        run: |
+          curl --location "${{ env.UAT_URL }}/deployment-manager/deployments/compare" \
+            --header "Authorization: Bearer ${{ steps.uat-auth.outputs.token }}" \
+            --form "template=@template.json" \
+            --output diff.json
+
+      - name: Upload Diff Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zuora-diff
+          path: diff.json
+
+
+  # STEP 3: Manual Approval
+  approval:
+    needs: compare-uat
+    runs-on: ubuntu-latest
+    environment:
+      name: Production-Approval
+
+    steps:
+      - name: Await Manual Approval
+        run: echo "Waiting for deployment approval..."
+
+
+  # STEP 4: Compare again and Deploy to Target Tenant
+  deploy-target:
+    needs: approval
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Template Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: zuora-template
+
+      - name: Install Dependencies
+        run: sudo apt update && sudo apt install -y curl jq
+
+      - name: Authenticate Target Tenant
+        id: target-auth
+        run: |
+          response=$(curl --location "${{ env.TARGET_URL }}/oauth/token" \
+            --header 'Content-Type: application/x-www-form-urlencoded' \
+            --data-urlencode "client_id=${{ secrets.TARGET_CLIENT_ID }}" \
+            --data-urlencode "client_secret=${{ secrets.TARGET_SECRET }}" \
+            --data-urlencode "grant_type=client_credentials")
+
+          token=$(echo "$response" | jq -r '.access_token')
+          echo "token=$token" >> $GITHUB_OUTPUT
+
+      - name: Final Compare Before Deploy
+        run: |
+          curl --location "${{ env.TARGET_URL }}/deployment-manager/deployments/compare" \
+            --header "Authorization: Bearer ${{ steps.target-auth.outputs.token }}" \
+            --form "template=@template.json" \
+            --output final-diff.json
+
+      - name: Deploy Template to Target Tenant
+        run: |
+          deployment_name="Production_Deploy_$(date +%Y%m%d%H%M%S)"
+
+          curl --location "${{ env.TARGET_URL }}/deployment-manager/deployments/templates?name=$deployment_name&description=$deployment_name&comments=$deployment_name&sendEmail=true&emails=vemulamanoj1920@gmail.com" \
+            --header "Authorization: Bearer ${{ steps.target-auth.outputs.token }}" \
+            --form "template=@template.json"
+
+      - name: Deployment Completed
+        run: echo "Zuora deployment completed successfully."
