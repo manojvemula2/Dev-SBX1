@@ -6,9 +6,9 @@ on:
       - main
 
 env:
-  SOURCE_URL: https://rest.sandbox.eu.zuora.com
-  UAT_URL: https://rest.sandbox.eu.zuora.com
-  TARGET_URL: https://rest.sandbox.eu.zuora.com
+  SOURCE_URL: https://sandbox.eu.zuora.com
+  UAT_URL: https://test.eu.zuora.com
+  TARGET_URL: https://test.eu.zuora.com
 
 jobs:
 
@@ -99,7 +99,7 @@ jobs:
     needs: compare-uat
     runs-on: ubuntu-latest
     environment:
-      name: Production-Approval
+      name: UAT-Approval
 
     steps:
       - name: Await Manual Approval
@@ -123,10 +123,10 @@ jobs:
       - name: Authenticate Target Tenant
         id: target-auth
         run: |
-          response=$(curl --location "${{ env.TARGET_URL }}/oauth/token" \
+          response=$(curl --location "${{ env.UAT_URL }}/oauth/token" \
             --header 'Content-Type: application/x-www-form-urlencoded' \
-            --data-urlencode "client_id=${{ secrets.TARGET_CLIENT_ID }}" \
-            --data-urlencode "client_secret=${{ secrets.TARGET_SECRET }}" \
+            --data-urlencode "client_id=${{ secrets.UAT_CLIENT_ID }}" \
+            --data-urlencode "client_secret=${{ secrets.UAT_SECRET }}" \
             --data-urlencode "grant_type=client_credentials")
 
           token=$(echo "$response" | jq -r '.access_token')
@@ -134,7 +134,7 @@ jobs:
 
       - name: Final Compare Before Deploy
         run: |
-          curl --location "${{ env.TARGET_URL }}/deployment-manager/deployments/compare" \
+         curl --location "${{ env.UAT_URL }}/deployment-manager/deployments/compare" \
             --header "Authorization: Bearer ${{ steps.target-auth.outputs.token }}" \
             --form "template=@template.json" \
             --output final-diff.json
@@ -143,7 +143,7 @@ jobs:
         run: |
           deployment_name="Production_Deploy_$(date +%Y%m%d%H%M%S)"
 
-          curl --location "${{ env.TARGET_URL }}/deployment-manager/deployments/templates?name=$deployment_name&description=$deployment_name&comments=$deployment_name&sendEmail=true&emails=vemulamanoj1920@gmail.com" \
+          curl --location "${{ env.UAT_URL }}/deployment-manager/deployments/templates?name=$deployment_name&description=$deployment_name&comments=$deployment_name&sendEmail=true&emails=vemulamanoj1920@gmail.com" \
             --header "Authorization: Bearer ${{ steps.target-auth.outputs.token }}" \
             --form "template=@template.json"
 
