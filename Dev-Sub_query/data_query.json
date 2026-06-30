@@ -11,7 +11,7 @@
   "createdBy" : "Vemula Manoj",
   "updatedBy" : "Vemula Manoj",
   "createdOn" : "2026-06-24T14:28:20.272Z",
-  "updatedOn" : "2026-06-26T11:37:03.515Z",
+  "updatedOn" : "2026-06-30T07:05:17.719Z",
   "type" : "Others",
   "repo" : true,
   "connectorId" : null,
@@ -23,10 +23,10 @@
     "repoName" : "Dev-SBX1",
     "branchName" : "Deployments-SBX1",
     "path" : "Dev-Sub_query",
-    "commitMessage" : "Added subscription query",
+    "commitMessage" : "Product query add",
     "error" : null,
     "status" : "UPLOADED",
-    "commitId" : "95e883b20a02802d9e26816ee5ff6452c1359758"
+    "commitId" : "3b18d46d4e77c490a9fdcd47e2b531c946b48b2d"
   },
   "content" : {
     "settings" : [ ],
@@ -47,7 +47,7 @@
       "segregationKeys" : [ "Available Queries" ],
       "originalPayload" : null,
       "response" : [ {
-        "id" : "db3d3ef0-0f2a-4731-a020-d8633dbc45ac",
+        "id" : "70f6faf6-8096-4bb9-88c2-691838c82ddb",
         "key" : "Data Query",
         "segregationKey" : "Available Queries",
         "componentType" : "DataQuery",
@@ -84,20 +84,6 @@
             "SourceData" : "LIVE",
             "QueryName" : "cum.report"
           }, {
-            "Id" : "4baa0c3e-c3ba-404f-97ba-c7563b035e25",
-            "type" : "SavedQuery",
-            "CreatedById" : "8b1145cf4bac4bd0a2bcad89678e4fc4",
-            "UpdatedById" : "8b1145cf4bac4bd0a2bcad89678e4fc4",
-            "CreatedDate" : "2026-06-26T11:30:26.463Z",
-            "UpdatedDate" : "2026-06-26T11:30:26.463Z",
-            "Compression" : "NONE",
-            "ReadDeleted" : false,
-            "Query" : "select * from subscription",
-            "OutputFormat" : "CSV",
-            "UseIndexJoin" : false,
-            "SourceData" : "LIVE",
-            "QueryName" : "Dev-Subscription"
-          }, {
             "Id" : "dbcb83a6-486e-409c-b038-50408c95e05c",
             "type" : "SavedQuery",
             "CreatedById" : "d8a9ff816c0c46c1a39e43d8fae0c212",
@@ -112,19 +98,19 @@
             "SourceData" : "LIVE",
             "QueryName" : "OHC Subscriptions"
           }, {
-            "Id" : "d1aba0cd-c0ca-4ef1-9e29-cc0b489cdce6",
+            "Id" : "32c09264-eded-413a-bf58-6fbcb343e0cc",
             "type" : "SavedQuery",
             "CreatedById" : "8b1145cf4bac4bd0a2bcad89678e4fc4",
             "UpdatedById" : "8b1145cf4bac4bd0a2bcad89678e4fc4",
-            "CreatedDate" : "2026-06-26T10:49:45.370Z",
-            "UpdatedDate" : "2026-06-26T10:49:45.370Z",
+            "CreatedDate" : "2026-06-30T07:04:21.550Z",
+            "UpdatedDate" : "2026-06-30T07:04:21.550Z",
             "Compression" : "NONE",
             "ReadDeleted" : false,
-            "Query" : "select * from account",
+            "Query" : "select * from usage",
             "OutputFormat" : "CSV",
             "UseIndexJoin" : false,
             "SourceData" : "LIVE",
-            "QueryName" : "Dev-Test"
+            "QueryName" : "Data_Usage"
           }, {
             "Id" : "298c1433-21e2-4b8e-8df3-21119073a6e8",
             "type" : "SavedQuery",
@@ -141,12 +127,40 @@
             "SourceData" : "LIVE",
             "QueryName" : "legal entity"
           }, {
-            "Id" : "b504d127-67da-42a4-8200-6ebbb046e915",
+            "Id" : "5d13be31-bd4b-4816-a5de-0052c14538ee",
             "type" : "SavedQuery",
             "CreatedById" : "8b1145cf4bac4bd0a2bcad89678e4fc4",
             "UpdatedById" : "8b1145cf4bac4bd0a2bcad89678e4fc4",
-            "CreatedDate" : "2026-06-26T11:36:35.781Z",
-            "UpdatedDate" : "2026-06-26T11:36:35.781Z",
+            "CreatedDate" : "2026-06-26T11:55:01.634Z",
+            "UpdatedDate" : "2026-06-26T11:55:01.634Z",
+            "Compression" : "NONE",
+            "ReadDeleted" : false,
+            "Query" : "select * from account",
+            "OutputFormat" : "CSV",
+            "UseIndexJoin" : false,
+            "SourceData" : "LIVE",
+            "QueryName" : "Dev-Test"
+          }, {
+            "Id" : "b4e092e7-f22b-44b3-ba3d-8bacff7efb8e",
+            "type" : "SavedQuery",
+            "CreatedById" : "8b1145cf4bac4bd0a2bcad89678e4fc4",
+            "UpdatedById" : "8b1145cf4bac4bd0a2bcad89678e4fc4",
+            "CreatedDate" : "2026-06-26T11:59:35.815Z",
+            "UpdatedDate" : "2026-06-26T11:59:35.815Z",
+            "Compression" : "NONE",
+            "ReadDeleted" : false,
+            "Query" : "select * from subscription",
+            "OutputFormat" : "CSV",
+            "UseIndexJoin" : false,
+            "SourceData" : "LIVE",
+            "QueryName" : "Dev-Subscription"
+          }, {
+            "Id" : "fc58a619-ca7f-45f6-a6a7-91d8ff184797",
+            "type" : "SavedQuery",
+            "CreatedById" : "8b1145cf4bac4bd0a2bcad89678e4fc4",
+            "UpdatedById" : "8b1145cf4bac4bd0a2bcad89678e4fc4",
+            "CreatedDate" : "2026-06-26T11:59:35.811Z",
+            "UpdatedDate" : "2026-06-26T11:59:35.811Z",
             "Compression" : "NONE",
             "ReadDeleted" : false,
             "Query" : "select * from product",
