@@ -40,7 +40,7 @@ jobs:
 
       - name: Download Template from Source Sandbox
         run: |
-          curl --location "${{ env.SOURCE_URL }}/deployment-manager/templates/export" \
+          curl --location "${{ env.SOURCE_URL }}/deployment-manager/deployment_artifacts?deployment_template_id=ba790964-88d8-4f60-a113-6be6adb3fba6" \
             --header "Authorization: Bearer ${{ steps.source-auth.outputs.token }}" \
             --output template.json
 
@@ -82,7 +82,7 @@ jobs:
 
       - name: Compare Template with UAT
         run: |
-          curl --location "${{ env.UAT_URL }}/deployment-manager/deployments/compare" \
+          curl --location "${{ env.UAT_URL }}/deployment-manager/deployment_artifacts/compare" \
             --header "Authorization: Bearer ${{ steps.uat-auth.outputs.token }}" \
             --form "template=@template.json" \
             --output diff.json
@@ -134,7 +134,7 @@ jobs:
 
       - name: Final Compare Before Deploy
         run: |
-         curl --location "${{ env.UAT_URL }}/deployment-manager/deployments/compare" \
+         curl --location "${{ env.UAT_URL }}/deployment-manager/deployment_artifacts/compare" \
             --header "Authorization: Bearer ${{ steps.target-auth.outputs.token }}" \
             --form "template=@template.json" \
             --output final-diff.json
