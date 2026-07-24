@@ -3,7 +3,7 @@ name: Zuora-CICD-Pipeline
 on:
   push:
     branches:
-      - Deployments-SBX1
+      - 
 
 env:
   SOURCE_URL: https://sandbox.eu.zuora.com
