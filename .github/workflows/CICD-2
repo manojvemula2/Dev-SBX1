@@ -6,7 +6,7 @@ on:
       - Deployments-SBX1
 
 env:
-  TARGET_URL: https://rest.sandbox.eu.zuora.com
+  TARGET_URL: https://rest.test.eu.zuora.com
 
 jobs:
 
