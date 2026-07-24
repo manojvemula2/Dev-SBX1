@@ -2,7 +2,7 @@
   "id" : "5c8b6156-5448-400e-8af9-3c00da1293bc",
   "name" : "Multiple",
   "description" : "Multi",
-  "status" : "DONE",
+  "status" : "Synced",
   "errors" : "",
   "active" : true,
   "tenantName" : "Philips Electronics Netherlands B.V. SBX 1  (2000253) (EU-API-Sandbox)",
@@ -11,14 +11,24 @@
   "createdBy" : "Vemula Manoj",
   "updatedBy" : "Vemula Manoj",
   "createdOn" : "2026-07-24T10:20:37.611Z",
-  "updatedOn" : "2026-07-24T10:20:47.424Z",
+  "updatedOn" : "2026-07-24T18:56:28.214Z",
   "type" : "Others",
   "templateCategory" : null,
-  "repo" : false,
+  "repo" : true,
   "connectorId" : null,
   "lessThanMaxPC" : false,
   "structurePresent" : true,
-  "repoDetails" : null,
+  "repoDetails" : {
+    "id" : "9fe8f3a7-c396-49b5-a3ab-cc86d279b8f9",
+    "orgName" : "manojvemula2",
+    "repoName" : "Dev-SBX1",
+    "branchName" : "Deployments-SBX1",
+    "path" : "Dev-Sub_query",
+    "commitMessage" : "Multiple",
+    "error" : null,
+    "status" : "UPLOADED",
+    "commitId" : "0b5e28d7df799d76510cc7c25fd0d301153832e3"
+  },
   "content" : {
     "settings" : [ ],
     "taxation" : [ ],
@@ -432,7 +442,7 @@
         }
       },
       "response" : [ {
-        "id" : "c602bf6d-1041-4534-a769-6c79d718c895",
+        "id" : "02beec31-f5ef-4e6b-8c19-5f76fbf4b169",
         "key" : "AllInvoiceTemplates",
         "segregationKey" : "Available Billing Document Configurations",
         "componentType" : "BillingDocuments",
@@ -710,7 +720,7 @@
         "featureDisabled" : false
       },
       "response" : [ {
-        "id" : "976938f7-312c-4d5d-bc0c-08f01cf344c4",
+        "id" : "3c7452dc-c593-42a5-b581-5bf9aac5f912",
         "key" : "Suspend RMA subscription on callout_0.0.2",
         "segregationKey" : "Suspend RMA subscription on callout",
         "componentType" : "WorkFlows",
