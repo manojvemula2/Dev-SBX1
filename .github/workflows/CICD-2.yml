@@ -1,0 +1,82 @@
+name: Zuora-CICD-Pipeline
+
+on:
+  push:
+    branches:
+      - Deployments-SBX1
+
+env:
+  TARGET_URL: https://rest.test.eu.zuora.com
+
+jobs:
+
+  approval:
+    runs-on: ubuntu-latest
+
+    environment:
+      name: Production-Approval
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Verify JSON File Exists
+        run: |
+          find . -name "*.json"
+
+      - name: Waiting for Approval
+        run: echo "Waiting for deployment approval..."
+
+  deploy:
+    needs: approval
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: sudo apt update && sudo apt install -y curl jq
+
+      - name: Authenticate Target Tenant
+        id: auth
+        run: |
+          response=$(curl --location "${{ env.TARGET_URL }}/oauth/token" \
+            --header "Content-Type: application/x-www-form-urlencoded" \
+            --data-urlencode "client_id=${{ secrets.TARGET_CLIENT_ID }}" \
+            --data-urlencode "client_secret=${{ secrets.TARGET_SECRET }}" \
+            --data-urlencode "grant_type=client_credentials")
+
+          token=$(echo "$response" | jq -r '.access_token')
+
+          if [ "$token" = "null" ]; then
+            echo "$response"
+            exit 1
+          fi
+
+          echo "token=$token" >> $GITHUB_OUTPUT
+
+      - name: Find Deployment JSON
+        id: file
+        run: |
+          FILE=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.json$' | head -1)
+
+          if [ -z "$FILE" ]; then
+            echo "No JSON file found."
+            exit 1
+          fi
+
+          echo "Using $FILE"
+
+          echo "FILE=$FILE" >> $GITHUB_ENV
+
+      - name: Deploy to Target Tenant
+        run: |
+          deployment_name="GitHub_Deploy_$(date +%Y%m%d%H%M%S)"
+
+          curl --location "${{ env.TARGET_URL }}/deployment-manager/deployments/templates?name=${deployment_name}&description=${deployment_name}&comments=GitHubDeployment&sendEmail=true&emails=vemulamanoj1920@gmail.com" \
+            --header "Authorization: Bearer ${{ steps.auth.outputs.token }}" \
+            --form "template=@${FILE}"
+
+      - name: Deployment Completed
+        run: echo "Deployment completed successfully."
