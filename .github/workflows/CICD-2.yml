@@ -19,10 +19,12 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
-      - name: Verify JSON File Exists
+      - name: Show JSON files changed
         run: |
-          find . -name "*.json"
+          git diff --name-only HEAD~1 HEAD | grep '\.json$' || true
 
       - name: Waiting for Approval
         run: echo "Waiting for deployment approval..."
@@ -34,6 +36,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - name: Install Dependencies
         run: sudo apt update && sudo apt install -y curl jq
@@ -49,34 +53,55 @@ jobs:
 
           token=$(echo "$response" | jq -r '.access_token')
 
-          if [ "$token" = "null" ]; then
+          if [ "$token" = "null" ] || [ -z "$token" ]; then
+            echo "Authentication failed"
             echo "$response"
             exit 1
           fi
 
           echo "token=$token" >> $GITHUB_OUTPUT
 
-      - name: Find Deployment JSON
-        id: file
+      - name: Find Changed JSON Files
+        id: files
         run: |
-          FILE=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.json$' | head -1)
+          FILES=$(git diff --name-only HEAD~1 HEAD | grep '\.json$' || true)
 
-          if [ -z "$FILE" ]; then
-            echo "No JSON file found."
+          if [ -z "$FILES" ]; then
+            echo "No JSON deployment files found."
             exit 1
           fi
 
-          echo "Using $FILE"
+          echo "Files to deploy:"
+          echo "$FILES"
 
-          echo "FILE=$FILE" >> $GITHUB_ENV
+          echo "FILES<<EOF" >> $GITHUB_ENV
+          echo "$FILES" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
-      - name: Deploy to Target Tenant
+      - name: Deploy JSON Files
         run: |
-          deployment_name="GitHub_Deploy_$(date +%Y%m%d%H%M%S)"
+          while IFS= read -r FILE
+          do
+            if [ ! -f "$FILE" ]; then
+              echo "Skipping missing file: $FILE"
+              continue
+            fi
 
-          curl --location "${{ env.TARGET_URL }}/deployment-manager/deployments/templates?name=${deployment_name}&description=${deployment_name}&comments=GitHubDeployment&sendEmail=true&emails=vemulamanoj1920@gmail.com" \
-            --header "Authorization: Bearer ${{ steps.auth.outputs.token }}" \
-            --form "template=@${FILE}"
+            deployment_name=$(basename "$FILE" .json)_$(date +%Y%m%d%H%M%S)
+
+            echo "Deploying $FILE"
+
+            curl --fail --location "${{ env.TARGET_URL }}/deployment-manager/deployments/templates" \
+              --header "Authorization: Bearer ${{ steps.auth.outputs.token }}" \
+              --header "Accept: application/json" \
+              --form "name=${deployment_name}" \
+              --form "description=GitHub Deployment - ${deployment_name}" \
+              --form "comments=Automated deployment from GitHub Actions" \
+              --form "sendEmail=true" \
+              --form "emails=vemulamanoj1920@gmail.com" \
+              --form "template=@${FILE}"
+
+          done <<< "$FILES"
 
       - name: Deployment Completed
-        run: echo "Deployment completed successfully."
+        run: echo "All deployments completed successfully."
