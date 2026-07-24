@@ -6,7 +6,7 @@ on:
       - Deployments-SBX1
 
 env:
-  TARGET_URL: https://test.eu.zuora.com
+  TARGET_URL: https://rest.sandbox.eu.zuora.com
 
 jobs:
 
@@ -59,7 +59,7 @@ jobs:
       - name: Find Deployment JSON
         id: file
         run: |
-          FILE=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep '\.json$' | head -1)
+          FILE=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.json$' | head -1)
 
           if [ -z "$FILE" ]; then
             echo "No JSON file found."
